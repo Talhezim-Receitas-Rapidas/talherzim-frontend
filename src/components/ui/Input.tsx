@@ -15,7 +15,6 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   isPassword?: boolean;
   rightIcon?: ReactNode;
-  labelAside?: ReactNode;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
@@ -25,7 +24,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     error,
     isPassword = false,
     rightIcon,
-    labelAside,
     type = 'text',
     className = '',
     ...props
@@ -44,25 +42,21 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 
   return (
     <div className="flex w-full flex-col gap-1.5">
-      <div className="flex items-center justify-between">
-        <label htmlFor={id} className="text-sm font-bold text-ink">
-          {label}
-        </label>
+      <label htmlFor={id} className="text-sm font-bold text-ink">
+        {label}
+      </label>
 
-        {labelAside}
-      </div>
-
-      <div className="relative">
+      <div className="relative w-full">
         <input
           ref={ref}
           id={id}
           type={resolvedType}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? errorId : undefined}
-          className={`w-full rounded-2xl border-2 bg-stone-field px-4 py-3 text-sm text-ink outline-none transition-all duration-150 placeholder:text-stone-placeholder disabled:cursor-not-allowed disabled:opacity-50 ${
+          className={`w-full rounded-2xl border-2 bg-stone-field px-3.5 py-3 text-sm text-ink outline-none transition-colors duration-150 placeholder:text-stone-placeholder disabled:cursor-not-allowed disabled:opacity-50 ${
             error
-              ? 'border-danger shadow-[3px_3px_0px_0px_theme(colors.danger)] focus:shadow-[4px_4px_0px_0px_theme(colors.danger)]'
-              : 'border-ink shadow-[3px_3px_0px_0px_theme(colors.ink)] focus:border-brand-focus focus:shadow-[4px_4px_0px_0px_theme(colors.brand-focus)]'
+              ? 'border-danger focus:border-danger'
+              : 'border-ink focus:border-brand-focus'
           } ${isPassword || rightIcon ? 'pr-12' : ''} ${className}`}
           {...props}
         />

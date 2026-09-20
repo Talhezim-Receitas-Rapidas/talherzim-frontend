@@ -1,10 +1,10 @@
 import type { BaseSyntheticEvent } from 'react';
+
 import type { FieldErrors, UseFormRegister } from 'react-hook-form';
 
 import { Button } from '../../components/ui/Button';
 import { FormError } from '../../components/ui/FormError';
 import { Input } from '../../components/ui/Input';
-import { Logo } from '../../components/ui/Logo';
 
 export interface LoginFormValues {
   email: string;
@@ -32,21 +32,20 @@ export function LoginForm({
   onForgotPassword,
 }: LoginFormProps) {
   return (
-    <div className="w-full">
-      <div className="mb-5 text-center">
-        <div className="mx-auto mb-6 flex w-fit items-center justify-center rounded-2xl border-2 border-ink bg-cream-soft px-5 py-3 shadow-[4px_4px_0px_0px_theme(colors.ink)]">
-          <Logo className="h-11 w-auto" />
-        </div>
-
+    <div className="mx-auto w-full max-w-[420px]">
+      {/* cabeçalho */}
+      <div className="mb-6 text-center">
         <h1 className="text-2xl font-black tracking-tight sm:text-3xl">
-          Conecte sua despensa à sua mesa
+          Bem-vindo de volta ao Talherzim<span className="text-brand">.</span>
         </h1>
 
-        <p className="mt-1 text-sm text-stone-muted">
+        <p className="mt-2 text-sm text-stone-muted">
           Descubra receitas instantâneas com ingredientes que você já tem.
         </p>
       </div>
-      <div className="mb-5 flex rounded-2xl border-2 border-ink bg-stone-field p-1 shadow-[3px_3px_0px_0px_theme(colors.ink)]">
+
+      {/* navegação entre autenticação */}
+      <div className="mb-6 flex rounded-2xl border-2 border-ink bg-stone-field p-1">
         <span
           aria-current="page"
           className="flex-1 rounded-xl border-2 border-ink bg-brand py-2.5 text-center text-sm font-bold text-white shadow-[2px_2px_0px_0px_theme(colors.ink)]"
@@ -63,7 +62,12 @@ export function LoginForm({
         </button>
       </div>
 
-      <form onSubmit={onSubmit} noValidate className="flex flex-col gap-3.5">
+      {/* formulário */}
+      <form
+        onSubmit={onSubmit}
+        noValidate
+        className="mx-auto flex w-full flex-col gap-4"
+      >
         {serverError && <FormError message={serverError} />}
 
         <Input
@@ -76,28 +80,29 @@ export function LoginForm({
           {...register('email')}
         />
 
-        <Input
-          id="login-password"
-          label="Senha"
-          isPassword
-          autoComplete="current-password"
-          placeholder="••••••••"
-          error={errors.password?.message}
-          labelAside={
-            <button
-              type="button"
-              onClick={onForgotPassword}
-              className="text-xs font-bold text-brand hover:underline"
-            >
-              Esqueceu a senha?
-            </button>
-          }
-          {...register('password')}
-        />
+        <div className="flex flex-col gap-1.5">
+          <Input
+            id="login-password"
+            label="Senha"
+            isPassword
+            autoComplete="current-password"
+            placeholder="••••••••"
+            error={errors.password?.message}
+            {...register('password')}
+          />
+
+          <button
+            type="button"
+            onClick={onForgotPassword}
+            className="self-end text-xs font-bold text-brand transition-colors hover:underline"
+          >
+            Esqueceu a senha?
+          </button>
+        </div>
 
         <label
           htmlFor="login-remember"
-          className="flex items-center gap-2 pt-1 text-sm text-stone-body"
+          className="flex items-center gap-2 pt-0.5 text-sm text-stone-body"
         >
           <input
             id="login-remember"
@@ -108,7 +113,7 @@ export function LoginForm({
           Lembrar meus dados de acesso
         </label>
 
-        <Button type="submit" isLoading={isLoading} className="mt-2">
+        <Button type="submit" isLoading={isLoading} className="mt-1">
           Entrar na Despensa
         </Button>
       </form>
