@@ -33,9 +33,9 @@ export function LoginForm({
 }: LoginFormProps) {
   return (
     <div className="w-full">
-      <div className="mb-6 text-center">
-        <div className="mx-auto mb-8 flex w-fit items-center justify-center rounded-2xl border-2 border-ink bg-cream-soft px-5 py-3 shadow-[4px_4px_0px_0px_theme(colors.ink)]">
-          <Logo className="h-12 w-auto" />
+      <div className="mb-5 text-center">
+        <div className="mx-auto mb-6 flex w-fit items-center justify-center rounded-2xl border-2 border-ink bg-cream-soft px-5 py-3 shadow-[4px_4px_0px_0px_theme(colors.ink)]">
+          <Logo className="h-11 w-auto" />
         </div>
 
         <h1 className="text-2xl font-black tracking-tight sm:text-3xl">
@@ -46,7 +46,6 @@ export function LoginForm({
           Descubra receitas instantâneas com ingredientes que você já tem.
         </p>
       </div>
-
       <div className="mb-5 flex rounded-2xl border-2 border-ink bg-stone-field p-1 shadow-[3px_3px_0px_0px_theme(colors.ink)]">
         <span
           aria-current="page"
