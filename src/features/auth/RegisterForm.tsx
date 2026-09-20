@@ -36,39 +36,44 @@ export function RegisterForm({
   onNavigatePrivacy,
 }: RegisterFormProps) {
   return (
-    <div className="w-full">
-      {/* cabeçalho */}
+    <div className="mx-auto w-full max-w-[420px]">
+      {/* Cabeçalho */}
       <div className="mb-5 text-center">
         <h1 className="text-2xl font-black tracking-tight sm:text-3xl">
-          Crie sua conta no Talherzim<span className="text-brand">.</span>
+          Crie sua conta no Talherzim
+          <span className="text-brand">.</span>
         </h1>
 
-        <p className="mt-2 text-sm text-stone-muted">
+        <p className="mt-1.5 text-sm text-stone-muted">
           Organize sua despensa e descubra novas possibilidades para suas
           refeições.
         </p>
       </div>
 
-      {/* navegação entre autenticação */}
-      <div className="mb-4 flex rounded-2xl border-2 border-ink bg-stone-field p-1 shadow-[3px_3px_0px_0px_theme(colors.ink)]">
+      {/* Navegação entre autenticação */}
+      <div className="mb-5 flex rounded-2xl border-2 border-ink bg-stone-field p-1">
         <button
           type="button"
           onClick={onNavigateLogin}
-          className="flex-1 rounded-xl border-2 border-transparent py-2 text-sm font-bold text-stone-muted transition-colors hover:text-ink"
+          className="flex-1 rounded-xl border-2 border-transparent py-2.5 text-sm font-bold text-stone-muted transition-colors hover:text-ink"
         >
           Entrar
         </button>
 
         <span
           aria-current="page"
-          className="flex-1 rounded-xl border-2 border-ink bg-brand py-2 text-center text-sm font-bold text-white shadow-[2px_2px_0px_0px_theme(colors.ink)]"
+          className="flex-1 rounded-xl border-2 border-ink bg-brand py-2.5 text-center text-sm font-bold text-white shadow-[2px_2px_0px_0px_theme(colors.ink)]"
         >
           Cadastrar
         </span>
       </div>
 
-      {/* formulário */}
-      <form onSubmit={onSubmit} noValidate className="flex flex-col gap-3">
+      {/* Formulário */}
+      <form
+        onSubmit={onSubmit}
+        noValidate
+        className="flex w-full flex-col gap-3"
+      >
         {serverError && <FormError message={serverError} />}
 
         <Input
@@ -111,7 +116,7 @@ export function RegisterForm({
           {...register('confirmPassword')}
         />
 
-        {/* termos */}
+        {/* Termos */}
         <div className="flex flex-col gap-1 pt-0.5">
           <label
             htmlFor="register-terms"
@@ -155,11 +160,11 @@ export function RegisterForm({
           />
         </div>
 
-        <Button type="submit" isLoading={isLoading} className="mt-1">
+        <Button type="submit" isLoading={isLoading} className="mt-0.5">
           Criar Minha Conta
         </Button>
 
-        <p className="mt-1 text-center text-sm text-stone-muted">
+        <p className="text-center text-sm text-stone-muted">
           Já tem uma conta?{' '}
           <button
             type="button"
