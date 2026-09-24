@@ -1,0 +1,19 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-brand: #9f3d00;
+  --color-brand-hover: #7a2f00;
+  --color-brand-focus: #0284c7;
+
+  --color-ink: #252525;
+  --color-danger: #ba1a1a;
+
+  --color-cream: #fdfcfa;
+  --color-cream-soft: #fff7ed;
+  --color-cream-badge: #ffedd5;
+
+  --color-stone-field: #fafaf9;
+  --color-stone-placeholder: #a8a29e;
+  --color-stone-muted: #78716c;
+  --color-stone-body: #4a4036;
+}
