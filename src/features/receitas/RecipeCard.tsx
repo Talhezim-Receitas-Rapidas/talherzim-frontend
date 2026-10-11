@@ -15,7 +15,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
     : 0;
 
   return (
-    <article className="group overflow-hidden rounded-3xl border-2 border-ink bg-white shadow-[4px_4px_0px_0px_theme(colors.ink)] transition-transform duration-200 hover:-translate-y-1">
+    <article className="group overflow-hidden rounded-3xl border-2 border-ink bg-cream-badge shadow-[4px_4px_0px_0px_theme(colors.ink)] transition-transform duration-200 hover:-translate-y-1">
       {/* imagem */}
       <Link
         to={`/receitas/${recipe.id}`}
@@ -34,18 +34,15 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
 
         {/* ingredientes disponíveis */}
-        <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full border-2 border-ink bg-white px-3 py-1.5 text-[11px] font-extrabold text-ink shadow-[2px_2px_0px_0px_theme(colors.ink)]">
-          <Check
-            className="h-3.5 w-3.5 text-brand"
-            strokeWidth={2.5}
-            aria-hidden="true"
-          />
-
-          {recipe.correspondencias}{' '}
-          {recipe.correspondencias === 1
-            ? 'ingrediente'
-            : 'ingredientes'}
-        </span>
+        <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full border-2 border-ink bg-cream-badge px-3 py-1.5 text-[11px] font-extrabold text-ink shadow-[2px_2px_0px_0px_theme(colors.ink)]">
+  <Check
+    className="h-3.5 w-3.5 text-brand"
+    strokeWidth={2.5}
+    aria-hidden="true"
+  />
+  {recipe.correspondencias}{' '}
+  {recipe.correspondencias === 1 ? 'ingrediente' : 'ingredientes'}
+</span>
 
         {/* tempo */}
         {recipe.tempoPreparo && (
