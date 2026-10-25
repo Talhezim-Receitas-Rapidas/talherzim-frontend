@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { Check, ChevronRight, CircleHelp, Star, Menu, X } from 'lucide-react';
+import {
+  Check,
+  ChevronRight,
+  CircleHelp,
+  Bookmark,
+  Menu,
+  X,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { Logo } from '../../components/ui/Logo';
@@ -95,7 +102,7 @@ export function RecipesHeader({
             aria-current={isFavoritos ? 'page' : undefined}
             className={`inline-flex items-center gap-1.5 ${linkDesktop(isFavoritos)}`}
           >
-            <Star
+            <Bookmark
               className="h-3.5 w-3.5"
               fill={isFavoritos ? 'currentColor' : 'none'}
               aria-hidden="true"
@@ -182,7 +189,7 @@ export function RecipesHeader({
               {isFavoritos ? (
                 <Check className="h-4 w-4" aria-hidden="true" />
               ) : (
-                <Star className="h-4 w-4" fill="none" aria-hidden="true" />
+                <Bookmark className="h-4 w-4" fill="none" aria-hidden="true" />
               )}
             </Link>
 

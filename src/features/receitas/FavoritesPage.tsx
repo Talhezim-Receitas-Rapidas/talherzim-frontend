@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import {
   ArrowRight,
-  Star,
+  Bookmark,
   LoaderCircle,
   RefreshCw,
   Utensils,
@@ -36,7 +36,7 @@ export function FavoritesPage() {
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-12">
         <section className="mb-8 flex items-start gap-4 sm:mb-10">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border-2 border-ink bg-brand shadow-[3px_3px_0px_0px_theme(colors.ink)]">
-            <Star
+            <Bookmark
               className="h-7 w-7 fill-white text-white"
               aria-hidden="true"
             />
@@ -108,7 +108,7 @@ export function FavoritesPage() {
         {quantidade === 0 && (
           <div className="rounded-3xl border-2 border-dashed border-ink/30 bg-[#FFF7E6] px-5 py-12 text-center sm:px-10 sm:py-16">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-ink bg-white shadow-[3px_3px_0px_0px_theme(colors.ink)]">
-              <Star className="h-8 w-8" aria-hidden="true" />
+              <Bookmark className="h-8 w-8" aria-hidden="true" />
             </div>
 
             <h2 className="mt-6 text-xl font-black sm:text-2xl">
@@ -117,7 +117,7 @@ export function FavoritesPage() {
 
             <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-stone-muted">
               Você ainda não salvou nenhuma receita. Explore as sugestões e
-              toque na estrela das suas preferidas.
+              toque no ícone das suas preferidas.
             </p>
 
             <Link
