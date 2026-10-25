@@ -13,9 +13,11 @@ export function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Rotas públicas */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/cadastro" element={<RegisterPage />} />
 
+        {/* Rotas protegidas */}
         <Route
           path="/despensa"
           element={
@@ -52,6 +54,7 @@ export function AppRouter() {
           }
         />
 
+        {/* Redirecionamentos */}
         <Route path="/" element={<Navigate to="/despensa" replace />} />
 
         <Route path="*" element={<Navigate to="/despensa" replace />} />
