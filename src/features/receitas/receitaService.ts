@@ -55,8 +55,18 @@ interface ErroCampo {
 }
 
 interface ErroApi {
-  erro: string;
+  erro?: string;
   campos?: ErroCampo[];
+}
+
+export class ReceitaApiError extends Error {
+  public readonly status: number;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.name = 'ReceitaApiError';
+    this.status = status;
+  }
 }
 
 function normalizarReceita(receita: ReceitaApi): Receita {
@@ -68,9 +78,7 @@ function normalizarReceita(receita: ReceitaApi): Receita {
     tempoPreparo: receita.tempoPreparo,
     correspondencias: receita.correspondencias ?? 0,
     totalIngredientes:
-      receita.totalIngredientes ??
-      receita.ingredientes?.length ??
-      0,
+      receita.totalIngredientes ?? receita.ingredientes?.length ?? 0,
     ingredientes: receita.ingredientes ?? [],
     modoPreparo: receita.modoPreparo ?? [],
   };
@@ -84,6 +92,7 @@ async function request<T>(endpoint: string): Promise<T> {
   const token = obterToken();
 
   const headers: HeadersInit = {
+    Accept: 'application/json',
     'Content-Type': 'application/json',
   };
 
@@ -91,7 +100,8 @@ async function request<T>(endpoint: string): Promise<T> {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
+  const baseUrl = API_URL.replace(/\/$/, '');
+  const response = await fetch(`${baseUrl}${endpoint}`, {
     method: 'GET',
     headers,
   });
@@ -102,25 +112,24 @@ async function request<T>(endpoint: string): Promise<T> {
     try {
       erro = (await response.json()) as ErroApi;
     } catch {
-      // A API pode retornar uma resposta sem JSON.
+      // A resposta pode não conter JSON.
     }
 
-    if (erro?.erro) {
-      throw new Error(erro.erro);
-    }
+    const mensagem =
+      erro?.erro ??
+      (response.status === 404
+        ? 'Não encontramos essa receita.'
+        : `Erro ao consultar receitas (${response.status}).`);
 
-    throw new Error(
-      `Erro ao consultar receitas (${response.status}).`,
-    );
+    throw new ReceitaApiError(response.status, mensagem);
   }
 
-  return response.json() as Promise<T>;
+  return (await response.json()) as T;
 }
 
 /**
  * Dados temporários para desenvolvimento.
- *
- * Remover quando os endpoints de receitas estiverem disponíveis na API.
+ * Mantidos enquanto a API não estiver configurada.
  */
 const receitasMock: Receita[] = [
   {
@@ -134,44 +143,20 @@ const receitasMock: Receita[] = [
     correspondencias: 4,
     totalIngredientes: 5,
     ingredientes: [
-      {
-        nome: 'Macarrão',
-        quantidade: '250g',
-      },
-      {
-        nome: 'Tomate',
-        quantidade: '2 unidades',
-      },
-      {
-        nome: 'Creme de leite',
-        quantidade: '1 caixa',
-      },
-      {
-        nome: 'Alho',
-        quantidade: '2 dentes',
-      },
-      {
-        nome: 'Sal',
-        quantidade: 'a gosto',
-      },
+      { nome: 'Macarrão', quantidade: '250 g' },
+      { nome: 'Tomate', quantidade: '2 unidades' },
+      { nome: 'Creme de leite', quantidade: '1 caixa' },
+      { nome: 'Alho', quantidade: '2 dentes' },
+      { nome: 'Sal', quantidade: 'A gosto' },
     ],
     modoPreparo: [
-      {
-        descricao:
-          'Cozinhe o macarrão em água com sal até ficar al dente.',
-      },
-      {
-        descricao:
-          'Refogue o alho e os tomates picados em uma panela.',
-      },
+      { descricao: 'Cozinhe o macarrão em água com sal até ficar al dente.' },
+      { descricao: 'Refogue o alho e os tomates picados em uma panela.' },
       {
         descricao:
           'Adicione o creme de leite e misture até formar um molho cremoso.',
       },
-      {
-        descricao:
-          'Misture o macarrão ao molho e sirva em seguida.',
-      },
+      { descricao: 'Misture o macarrão ao molho e sirva em seguida.' },
     ],
   },
   {
@@ -185,40 +170,18 @@ const receitasMock: Receita[] = [
     correspondencias: 3,
     totalIngredientes: 4,
     ingredientes: [
-      {
-        nome: 'Ovos',
-        quantidade: '3 unidades',
-      },
-      {
-        nome: 'Tomate',
-        quantidade: '1 unidade',
-      },
-      {
-        nome: 'Cebola',
-        quantidade: '1/2 unidade',
-      },
-      {
-        nome: 'Sal',
-        quantidade: 'a gosto',
-      },
+      { nome: 'Ovos', quantidade: '3 unidades' },
+      { nome: 'Tomate', quantidade: '1 unidade' },
+      { nome: 'Cebola', quantidade: '1/2 unidade' },
+      { nome: 'Sal', quantidade: 'A gosto' },
     ],
     modoPreparo: [
+      { descricao: 'Bata os ovos em um recipiente e tempere com sal.' },
       {
-        descricao:
-          'Bata os ovos em um recipiente e tempere com sal.',
+        descricao: 'Pique os legumes e refogue rapidamente em uma frigideira.',
       },
-      {
-        descricao:
-          'Pique os legumes e refogue rapidamente em uma frigideira.',
-      },
-      {
-        descricao:
-          'Adicione os ovos batidos e cozinhe em fogo baixo.',
-      },
-      {
-        descricao:
-          'Dobre a omelete e sirva ainda quente.',
-      },
+      { descricao: 'Adicione os ovos batidos e cozinhe em fogo baixo.' },
+      { descricao: 'Dobre a omelete e sirva ainda quente.' },
     ],
   },
   {
@@ -232,48 +195,18 @@ const receitasMock: Receita[] = [
     correspondencias: 5,
     totalIngredientes: 6,
     ingredientes: [
-      {
-        nome: 'Arroz cozido',
-        quantidade: '3 xícaras',
-      },
-      {
-        nome: 'Milho',
-        quantidade: '1/2 lata',
-      },
-      {
-        nome: 'Tomate',
-        quantidade: '1 unidade',
-      },
-      {
-        nome: 'Queijo',
-        quantidade: '150g',
-      },
-      {
-        nome: 'Cebola',
-        quantidade: '1/2 unidade',
-      },
-      {
-        nome: 'Sal',
-        quantidade: 'a gosto',
-      },
+      { nome: 'Arroz cozido', quantidade: '3 xícaras' },
+      { nome: 'Milho', quantidade: '1/2 lata' },
+      { nome: 'Tomate', quantidade: '1 unidade' },
+      { nome: 'Queijo', quantidade: '150 g' },
+      { nome: 'Cebola', quantidade: '1/2 unidade' },
+      { nome: 'Sal', quantidade: 'A gosto' },
     ],
     modoPreparo: [
-      {
-        descricao:
-          'Misture o arroz cozido com os legumes picados.',
-      },
-      {
-        descricao:
-          'Transfira a mistura para uma travessa.',
-      },
-      {
-        descricao:
-          'Cubra com queijo e leve ao forno preaquecido.',
-      },
-      {
-        descricao:
-          'Asse até o queijo derreter e dourar.',
-      },
+      { descricao: 'Misture o arroz cozido com os legumes picados.' },
+      { descricao: 'Transfira a mistura para uma travessa.' },
+      { descricao: 'Cubra com queijo e leve ao forno preaquecido.' },
+      { descricao: 'Asse até o queijo derreter e dourar.' },
     ],
   },
 ];
@@ -283,31 +216,22 @@ export async function listarReceitasSugeridas(): Promise<Receita[]> {
     return receitasMock;
   }
 
-  const data = await request<ReceitaApi[]>(
-    '/receitas/sugeridas',
-  );
-
+  const data = await request<ReceitaApi[]>('/receitas/sugeridas');
   return data.map(normalizarReceita);
 }
 
-export async function buscarReceita(
-  id: string,
-): Promise<Receita> {
+export async function buscarReceita(id: string): Promise<Receita> {
   if (!API_URL) {
-    const receita = receitasMock.find(
-      (item) => item.id === id,
-    );
+    const receita = receitasMock.find((item) => item.id === id);
 
     if (!receita) {
-      throw new Error('Não encontramos essa receita.');
+      throw new ReceitaApiError(404, 'Não encontramos essa receita.');
     }
 
     return receita;
   }
 
-  const data = await request<ReceitaApi>(
-    `/receitas/${id}`,
-  );
+  const data = await request<ReceitaApi>(`/receitas/${encodeURIComponent(id)}`);
 
   return normalizarReceita(data);
 }
