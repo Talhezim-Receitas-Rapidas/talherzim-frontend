@@ -22,7 +22,7 @@ interface ListaIngredientesResponse {
   data?: Ingrediente[];
 }
 
-const DESPENSA_ENDPOINT = '/despensa';
+const DESPENSA_ENDPOINT = '/ingredientes';
 
 export const despensaService = {
   async listar(): Promise<Ingrediente[]> {

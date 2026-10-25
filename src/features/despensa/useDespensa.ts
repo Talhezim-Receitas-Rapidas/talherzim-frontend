@@ -6,14 +6,14 @@ import {
   } from '@tanstack/react-query';
   
   import type { IngredientePayload } from './despensaService';
-  import { despensaMockService } from './despensaMockService';
+  import { despensaService } from './despensaService';
   
   const DESPENSA_QUERY_KEY = ['despensa'];
   
   export function useIngredientes() {
     return useQuery({
       queryKey: DESPENSA_QUERY_KEY,
-      queryFn: () => despensaMockService.listar(),
+      queryFn: () => despensaService.listar(),
     });
   }
   
@@ -22,7 +22,7 @@ import {
   
     return useMutation({
       mutationFn: (payload: IngredientePayload) =>
-        despensaMockService.cadastrar(payload),
+        despensaService.cadastrar(payload),
   
       onSuccess: async () => {
         await queryClient.invalidateQueries({
@@ -42,7 +42,7 @@ import {
   
     return useMutation({
       mutationFn: ({ id, payload }: AtualizarIngredienteParams) =>
-        despensaMockService.atualizar(id, payload),
+        despensaService.atualizar(id, payload),
   
       onSuccess: async () => {
         await queryClient.invalidateQueries({
@@ -56,7 +56,7 @@ import {
     const queryClient = useQueryClient();
   
     return useMutation({
-      mutationFn: (id: string) => despensaMockService.remover(id),
+      mutationFn: (id: string) => despensaService.remover(id),
   
       onSuccess: async () => {
         await queryClient.invalidateQueries({

@@ -1,3 +1,5 @@
+import { useAuthStore } from '../auth/authStore';
+
 const API_URL = import.meta.env.VITE_API_URL ?? '';
 
 export const FALLBACK_IMAGE =
@@ -30,9 +32,11 @@ interface ReceitaApi {
   nome: string;
   descricao?: string;
   imagem?: string;
+  imagem_url?: string;
   tempoPreparo?: number;
   correspondencias?: number;
   totalIngredientes?: number;
+  total_ingredientes?: number;
   ingredientes?: Array<
     | string
     | {
@@ -47,6 +51,15 @@ interface ReceitaApi {
         texto?: string;
       }
   >;
+  modo_preparo?:
+    | string
+    | Array<
+        | string
+        | {
+            descricao?: string;
+            texto?: string;
+          }
+      >;
 }
 
 interface ErroCampo {
@@ -69,23 +82,48 @@ export class ReceitaApiError extends Error {
   }
 }
 
+function normalizarModoPreparo(
+  modo:
+    | ReceitaApi['modoPreparo']
+    | ReceitaApi['modo_preparo'],
+): Array<string | ReceitaModoPreparo> {
+  if (!modo) {
+    return [];
+  }
+
+  if (Array.isArray(modo)) {
+    return modo;
+  }
+
+  return modo
+    .split('\n')
+    .map((etapa) => etapa.trim().replace(/^\d+[.)]\s*/, ''))
+    .filter(Boolean);
+}
+
 function normalizarReceita(receita: ReceitaApi): Receita {
+  const ingredientes = receita.ingredientes ?? [];
+
   return {
     id: String(receita.id),
     nome: receita.nome,
     descricao: receita.descricao,
-    imagem: receita.imagem || FALLBACK_IMAGE,
+    imagem: receita.imagem || receita.imagem_url || FALLBACK_IMAGE,
     tempoPreparo: receita.tempoPreparo,
     correspondencias: receita.correspondencias ?? 0,
     totalIngredientes:
-      receita.totalIngredientes ?? receita.ingredientes?.length ?? 0,
-    ingredientes: receita.ingredientes ?? [],
-    modoPreparo: receita.modoPreparo ?? [],
+      receita.totalIngredientes ??
+      receita.total_ingredientes ??
+      ingredientes.length,
+    ingredientes,
+    modoPreparo: normalizarModoPreparo(
+      receita.modoPreparo ?? receita.modo_preparo,
+    ),
   };
 }
 
 function obterToken(): string | null {
-  return localStorage.getItem('token');
+  return useAuthStore.getState().token;
 }
 
 async function request<T>(endpoint: string): Promise<T> {
