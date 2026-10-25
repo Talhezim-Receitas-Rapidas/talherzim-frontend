@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Check, ChevronRight, CircleHelp, Heart, Menu, X } from 'lucide-react';
+import { Check, ChevronRight, CircleHelp, Star, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { Logo } from '../../components/ui/Logo';
 
 interface RecipesHeaderProps {
-  activePage?: 'despensa' | 'receitas';
+  activePage?: 'despensa' | 'receitas' | 'favoritos';
   onNavigateHelp?: () => void;
 }
 
@@ -14,7 +14,10 @@ export function RecipesHeader({
   onNavigateHelp,
 }: RecipesHeaderProps) {
   const [menuAberto, setMenuAberto] = useState(false);
+
   const isDespensa = activePage === 'despensa';
+  const isReceitas = activePage === 'receitas';
+  const isFavoritos = activePage === 'favoritos';
 
   const linkBase =
     'flex items-center justify-between gap-3 rounded-2xl border-2 px-4 py-3 text-sm font-bold transition-colors';
@@ -26,6 +29,11 @@ export function RecipesHeader({
     'border-transparent text-stone-muted hover:border-ink/20 hover:bg-cream';
 
   const fecharMenu = () => setMenuAberto(false);
+
+  const linkDesktop = (ativo: boolean) =>
+    ativo
+      ? 'rounded-full border-2 border-ink bg-brand px-4 py-2 text-xs font-bold text-white shadow-[2px_2px_0px_0px_theme(colors.ink)]'
+      : 'rounded-full px-4 py-2 text-xs font-bold text-stone-muted transition-colors hover:text-ink';
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-ink/10 bg-cream/95 backdrop-blur-xl">
@@ -54,7 +62,9 @@ export function RecipesHeader({
                 aria-hidden="true"
               />
 
-              <span className="font-bold text-ink">Receitas Sugeridas</span>
+              <span className="font-bold text-ink">
+                {isFavoritos ? 'Favoritos' : 'Receitas Sugeridas'}
+              </span>
             </>
           )}
         </div>
@@ -67,33 +77,31 @@ export function RecipesHeader({
           <Link
             to="/despensa"
             aria-current={isDespensa ? 'page' : undefined}
-            className={
-              isDespensa
-                ? 'rounded-full border-2 border-ink bg-brand px-4 py-2 text-xs font-bold text-white shadow-[2px_2px_0px_0px_theme(colors.ink)]'
-                : 'rounded-full px-4 py-2 text-xs font-bold text-stone-muted transition-colors hover:text-ink'
-            }
+            className={linkDesktop(isDespensa)}
           >
             Minha Despensa
           </Link>
 
           <Link
             to="/receitas-sugeridas"
-            aria-current={!isDespensa ? 'page' : undefined}
-            className={
-              !isDespensa
-                ? 'rounded-full border-2 border-ink bg-brand px-4 py-2 text-xs font-bold text-white shadow-[2px_2px_0px_0px_theme(colors.ink)]'
-                : 'rounded-full px-4 py-2 text-xs font-bold text-stone-muted transition-colors hover:text-ink'
-            }
+            aria-current={isReceitas ? 'page' : undefined}
+            className={linkDesktop(isReceitas)}
           >
             Receitas Sugeridas
           </Link>
 
-          <a
-            href="#favoritos"
-            className="rounded-full px-4 py-2 text-xs font-bold text-stone-muted transition-colors hover:text-ink"
+          <Link
+            to="/favoritos"
+            aria-current={isFavoritos ? 'page' : undefined}
+            className={`inline-flex items-center gap-1.5 ${linkDesktop(isFavoritos)}`}
           >
+            <Star
+              className="h-3.5 w-3.5"
+              fill={isFavoritos ? 'currentColor' : 'none'}
+              aria-hidden="true"
+            />
             Favoritos
-          </a>
+          </Link>
         </nav>
 
         {/* Ações do cabeçalho */}
@@ -157,21 +165,26 @@ export function RecipesHeader({
             <Link
               to="/receitas-sugeridas"
               onClick={fecharMenu}
-              aria-current={!isDespensa ? 'page' : undefined}
-              className={`${linkBase} ${!isDespensa ? linkAtivo : linkInativo}`}
+              aria-current={isReceitas ? 'page' : undefined}
+              className={`${linkBase} ${isReceitas ? linkAtivo : linkInativo}`}
             >
               <span>Receitas Sugeridas</span>
-              {!isDespensa && <Check className="h-4 w-4" aria-hidden="true" />}
+              {isReceitas && <Check className="h-4 w-4" aria-hidden="true" />}
             </Link>
 
-            <a
-              href="#favoritos"
+            <Link
+              to="/favoritos"
               onClick={fecharMenu}
-              className={`${linkBase} ${linkInativo}`}
+              aria-current={isFavoritos ? 'page' : undefined}
+              className={`${linkBase} ${isFavoritos ? linkAtivo : linkInativo}`}
             >
               <span>Favoritos</span>
-              <Heart className="h-4 w-4" aria-hidden="true" />
-            </a>
+              {isFavoritos ? (
+                <Check className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <Star className="h-4 w-4" fill="none" aria-hidden="true" />
+              )}
+            </Link>
 
             {onNavigateHelp && (
               <button
