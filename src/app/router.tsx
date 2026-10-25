@@ -1,10 +1,10 @@
-
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import { LoginPage } from '../pages/auth/LoginPage';
 import { RegisterPage } from '../pages/auth/RegisterPage';
 import { RecipesListPage } from '../features/receitas/RecipesListPage';
 import { DespensaPage } from '../features/despensa/DespensaPage';
+import { RecipeDetailPage } from '../features/receitas/RecipeDetailPage';
 
 import { ProtectedRoute } from './ProtectedRoute';
 
@@ -17,7 +17,7 @@ export function AppRouter() {
         <Route
           path="/despensa"
           element={
-           <ProtectedRoute>
+            <ProtectedRoute>
               <DespensaPage />
             </ProtectedRoute>
           }
@@ -34,6 +34,7 @@ export function AppRouter() {
 
         <Route path="/" element={<Navigate to="/despensa" replace />} />
         <Route path="*" element={<Navigate to="/despensa" replace />} />
+        <Route path="/receitas/:id" element={<RecipeDetailPage />} />
       </Routes>
     </BrowserRouter>
   );
