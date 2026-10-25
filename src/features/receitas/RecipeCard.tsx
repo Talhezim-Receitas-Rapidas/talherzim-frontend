@@ -1,6 +1,7 @@
 import { ArrowRight, Check, Clock3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+import { FavoriteButton } from './FavoriteButton';
 import { FALLBACK_IMAGE, type Receita } from './receitaService';
 
 interface RecipeCardProps {
@@ -13,13 +14,13 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
     : 0;
 
   return (
-    <Link
-      to={`/receitas/${encodeURIComponent(recipe.id)}`}
-      aria-label={`Ver detalhes da receita ${recipe.nome}`}
-      className="group block rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-4"
-    >
-      <article className="overflow-hidden rounded-3xl border-2 border-ink bg-[#FFF7E6] shadow-[4px_4px_0px_0px_theme(colors.ink)] transition-transform duration-200 group-hover:-translate-y-1 group-hover:shadow-[6px_6px_0px_0px_theme(colors.ink)]">
-        <div className="relative block h-60 overflow-hidden bg-stone-field">
+    <article className="group relative overflow-hidden rounded-3xl border-2 border-ink bg-[#FFF7E6] shadow-[4px_4px_0px_0px_theme(colors.ink)] transition-transform duration-200 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_theme(colors.ink)]">
+      <div className="relative h-60 overflow-hidden bg-stone-field">
+        <Link
+          to={`/receitas/${encodeURIComponent(recipe.id)}`}
+          aria-label={`Ver detalhes da receita ${recipe.nome}`}
+          className="block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand"
+        >
           <img
             src={recipe.imagem || FALLBACK_IMAGE}
             alt={recipe.nome}
@@ -54,30 +55,43 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
               {recipe.tempoPreparo} min
             </span>
           )}
-        </div>
+        </Link>
 
-        <div className="flex min-h-48 flex-col p-5">
+        {/* O botão fica fora do Link para evitar links aninhados. */}
+        <div className="absolute right-3 top-3 z-10">
+          <FavoriteButton receitaId={recipe.id} />
+        </div>
+      </div>
+
+      <div className="flex min-h-48 flex-col p-5">
+        <Link
+          to={`/receitas/${encodeURIComponent(recipe.id)}`}
+          className="rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+        >
           <h2 className="text-xl font-black leading-tight tracking-tight text-ink">
             {recipe.nome}
           </h2>
+        </Link>
 
-          <p className="mt-2.5 line-clamp-2 text-sm leading-6 text-stone-muted">
-            {recipe.descricao ||
-              `${percentage}% dos ingredientes desta receita já estão na sua despensa.`}
-          </p>
+        <p className="mt-2.5 line-clamp-2 text-sm leading-6 text-stone-muted">
+          {recipe.descricao ||
+            `${percentage}% dos ingredientes desta receita já estão na sua despensa.`}
+        </p>
 
-          <div className="mt-5">
-            <span className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-ink bg-brand px-5 py-2.5 text-sm font-extrabold text-white shadow-[3px_3px_0px_0px_theme(colors.ink)] transition-all group-hover:bg-brand-hover group-hover:shadow-[5px_5px_0px_0px_theme(colors.ink)]">
-              Ver receita
-              <ArrowRight
-                className="h-4 w-4"
-                strokeWidth={2.5}
-                aria-hidden="true"
-              />
-            </span>
-          </div>
+        <div className="mt-5">
+          <Link
+            to={`/receitas/${encodeURIComponent(recipe.id)}`}
+            className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-ink bg-brand px-5 py-2.5 text-sm font-extrabold text-white shadow-[3px_3px_0px_0px_theme(colors.ink)] transition-all hover:bg-brand-hover hover:shadow-[5px_5px_0px_0px_theme(colors.ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+          >
+            Ver receita
+            <ArrowRight
+              className="h-4 w-4"
+              strokeWidth={2.5}
+              aria-hidden="true"
+            />
+          </Link>
         </div>
-      </article>
-    </Link>
+      </div>
+    </article>
   );
 }
