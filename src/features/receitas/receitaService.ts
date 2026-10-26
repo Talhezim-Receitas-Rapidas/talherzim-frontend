@@ -103,6 +103,12 @@ function normalizarModoPreparo(
 
 function normalizarReceita(receita: ReceitaApi): Receita {
   const ingredientes = receita.ingredientes ?? [];
+  const correspondencias = Number(receita.correspondencias);
+  const totalIngredientes = Number(
+    receita.totalIngredientes ??
+      receita.total_ingredientes ??
+      ingredientes.length,
+  );
 
   return {
     id: String(receita.id),
@@ -110,11 +116,10 @@ function normalizarReceita(receita: ReceitaApi): Receita {
     descricao: receita.descricao,
     imagem: receita.imagem || receita.imagem_url || FALLBACK_IMAGE,
     tempoPreparo: receita.tempoPreparo,
-    correspondencias: receita.correspondencias ?? 0,
-    totalIngredientes:
-      receita.totalIngredientes ??
-      receita.total_ingredientes ??
-      ingredientes.length,
+    correspondencias: Number.isFinite(correspondencias) ? correspondencias : 0,
+    totalIngredientes: Number.isFinite(totalIngredientes)
+      ? totalIngredientes
+      : 0,
     ingredientes,
     modoPreparo: normalizarModoPreparo(
       receita.modoPreparo ?? receita.modo_preparo,

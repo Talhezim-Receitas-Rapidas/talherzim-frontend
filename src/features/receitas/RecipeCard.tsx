@@ -9,9 +9,12 @@ interface RecipeCardProps {
 }
 
 export function RecipeCard({ recipe }: RecipeCardProps) {
-  const percentage = recipe.totalIngredientes
-    ? Math.round((recipe.correspondencias / recipe.totalIngredientes) * 100)
-    : 0;
+  const correspondencias = Number(recipe.correspondencias) || 0;
+  const totalIngredientes = Number(recipe.totalIngredientes) || 0;
+  const percentage =
+    totalIngredientes > 0
+      ? Math.round((correspondencias / totalIngredientes) * 100)
+      : 0;
 
   return (
     <article className="group relative overflow-hidden rounded-3xl border-2 border-ink bg-[#FFF7E6] shadow-[4px_4px_0px_0px_theme(colors.ink)] transition-transform duration-200 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_theme(colors.ink)]">
@@ -41,8 +44,8 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
               strokeWidth={2.5}
               aria-hidden="true"
             />
-            {recipe.correspondencias}{' '}
-            {recipe.correspondencias === 1 ? 'ingrediente' : 'ingredientes'}
+            {correspondencias}{' '}
+            {correspondencias === 1 ? 'ingrediente' : 'ingredientes'}
           </span>
 
           {recipe.tempoPreparo != null && (
