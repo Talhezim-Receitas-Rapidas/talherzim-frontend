@@ -2,13 +2,13 @@
 
 Front-end do **Talherzim** — aplicativo web que ajuda o usuário a cozinhar com o que já tem em casa: ele cadastra os ingredientes da **despensa**, vê **receitas sugeridas** e salva as preferidas nos **favoritos**.
 
-Consome a API do [`talherzim-backend`](https://github.com/Talhezim-Receitas-Rapidas/talherzim-backend) (Node.js + Express + PostgreSQL). Contrato de autenticação: `src/openapi.yaml` no repositório do back-end.
+Consome a API do [`talherzim-backend`](https://github.com/Talhezim-Receitas-Rapidas/talherzim-backend) (Node.js + Express + PostgreSQL). O contrato das rotas está em `src/openapi.yaml` no repositório do backend.
 
 ## Como rodar
 
 ```bash
 cp .env.example .env
-npm install
+npm ci
 npm run dev
 ```
 
@@ -20,7 +20,7 @@ Copie `.env.example` para `.env` e preencha:
 
 | Variável | Descrição |
 |---|---|
-| `VITE_API_URL` | URL base da API (ex.: `http://localhost:3000`). Se não definida, o `httpClient` usa `http://localhost:3000` e o serviço de receitas usa dados mockados |
+| `VITE_API_URL` | URL base da API. O cliente HTTP e o serviço de receitas usam `http://localhost:3000` quando a variável não é definida |
 
 > Variáveis `VITE_*` ficam expostas no bundle do navegador. Nunca coloque segredos nelas.
 
@@ -142,11 +142,11 @@ Gerencia os ingredientes do usuário (nome, quantidade, unidade).
 
 | Arquivo | Responsabilidade |
 |---|---|
-| `receitaService.ts` | `listarReceitasSugeridas()` → `GET /receitas/sugeridas`; `buscarReceita(id)` → `GET /receitas/:id`. Normaliza a resposta (`normalizarReceita`), aplica `FALLBACK_IMAGE` e lança `ReceitaApiError` (com `status`). Sem `VITE_API_URL`, devolve 3 receitas mockadas |
+| `receitaService.ts` | `consultarSugestoes(busca)` consulta `GET /receitas/sugeridas?detalhes=true&busca=...` e retorna receitas, avisos e estado da despensa. `listarReceitasSugeridas()` preserva o retorno em array. `buscarReceita(id)` consulta o detalhe. Usa o token do `useAuthStore` e normaliza campos de procedência e tradução |
 | `favoritosService.ts` | Favoritos persistidos em `localStorage` (`talherzim:receitas-favoritas`), com cache em memória, sincronização entre abas (evento `storage`) e o hook `useFavoritos()` baseado em `useSyncExternalStore` |
-| `RecipesListPage.tsx` | Lista sugestões, com busca por nome ou ingrediente e estados de loading, erro e vazio |
+| `RecipesListPage.tsx` | Consulta o backend após 500 ms sem digitação. Exibe resultados locais e externos, avisos e estados de carregamento, erro e vazio. O cache é separado por sessão e busca |
 | `RecipeCard.tsx` | Card com imagem, ingredientes em comum, tempo de preparo e `FavoriteButton` |
-| `RecipeDetailPage.tsx` | Detalhe: ingredientes e modo de preparo. Aceita itens como `string` ou objeto. Não faz retry em 404 |
+| `RecipeDetailPage.tsx` | Detalhe com ingredientes, medidas, preparo, região e fonte. Identifica tradução automática e permite repetir tradução indisponível. O botão de retorno usa `/receitas-sugeridas`. Não faz retry em 404 |
 | `FavoritesPage.tsx` | Busca cada receita favorita (`Promise.all`) por `['receitas-favoritas', ids]` |
 | `FavoriteButton.tsx` | Alterna favorito (`aria-pressed`). Fica fora do `<Link>` para evitar links aninhados |
 | `RecipesHeader.tsx` | Cabeçalho compartilhado, com navegação desktop/mobile e prop `activePage` (`despensa`, `receitas`, `favoritos`) |
@@ -206,16 +206,15 @@ Divergências entre o código atual e o fluxo completo com o back-end:
 
 | # | Situação | Onde |
 |---|---|---|
-| 1 | A despensa usa `despensaMockService` nos hooks; `despensaService` (REST) existe, mas não está ligado | `useDespensa.ts` |
-| 2 | `receitaService` lê o token em `localStorage['token']`, mas o login grava em `talherzim-auth`. Com `VITE_API_URL` definido, as chamadas de receitas vão sem `Authorization` | `receitaService.ts` |
-| 3 | Sem `VITE_API_URL`, as receitas vêm de um mock estático | `receitaService.ts` |
 | 4 | O campo `name` do cadastro é validado, mas **não é enviado** (a API ainda não o aceita) | `authService.ts` |
 | 5 | `rememberMe` existe no formulário de login, mas não altera o comportamento | `LoginForm.tsx` |
-| 6 | A senha exige 6+ caracteres no front-end; o mock de cadastro exige 8 | `LoginPage.tsx`, `RegisterPage.tsx`, `handlers.ts` |
-| 7 | Em `RecipeDetailPage`, "Voltar às receitas" navega para `/receitas`, que não existe e cai no redirecionamento para `/despensa`. A rota correta é `/receitas-sugeridas` | `RecipeDetailPage.tsx` |
 | 8 | Ajuda, Termos, Privacidade e "Esqueceu a senha?" são callbacks vazios | `LoginPage.tsx`, `RegisterPage.tsx` |
 | 9 | `App.tsx` não é usado; `main.tsx` renderiza `AppRouter` direto | `app/App.tsx` |
 | 10 | O worker do MSW não é iniciado | `main.tsx`, `mocks/` |
+
+As receitas externas dependem da disponibilidade da TheMealDB. A tradução dos detalhes depende do MyMemory e de sua cota diária. Os cartões da listagem mantêm os nomes originais. O detalhe traduz nome, região, ingredientes, medidas e preparo. Favoritos continuam armazenados no navegador.
+
+O fluxo e os exemplos de demonstração estão na [documentação de consulta externa](https://github.com/Talhezim-Receitas-Rapidas/talherzim-documentation/blob/main/docs/consulta-externa.md).
 
 ## Qualidade de código
 

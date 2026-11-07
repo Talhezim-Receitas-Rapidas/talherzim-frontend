@@ -71,7 +71,7 @@ export function RecipeDetailPage() {
     error instanceof ReceitaApiError && error.status === 404;
 
   function voltarParaReceitas() {
-    navigate('/receitas');
+    navigate('/receitas-sugeridas');
   }
 
   return (
@@ -192,6 +192,47 @@ export function RecipeDetailPage() {
                     <p className="mt-4 text-sm leading-7 text-stone-muted sm:text-base">
                       {receita.descricao}
                     </p>
+                  )}
+                  {receita.externa && (
+                    <div className="mt-4 space-y-2 text-sm text-stone-muted">
+                      <p className="font-bold text-brand">
+                        Receita encontrada em consulta externa · {receita.fonte}
+                      </p>
+                      <p>
+                        Região culinária informada pela fonte ·{' '}
+                        {receita.origem || 'Origem não informada'}
+                      </p>
+                      {receita.traducaoAutomatica && (
+                        <p>
+                          Ingredientes e preparo traduzidos automaticamente para
+                          português.
+                        </p>
+                      )}
+                      {receita.avisoTraducao && (
+                        <p role="status">
+                          {receita.avisoTraducao}{' '}
+                          <button
+                            type="button"
+                            onClick={() => void refetch()}
+                            disabled={isFetching}
+                            className="font-bold underline"
+                          >
+                            Tentar tradução novamente
+                          </button>
+                        </p>
+                      )}
+                      {receita.fonteUrl &&
+                        /^https?:\/\//i.test(receita.fonteUrl) && (
+                          <a
+                            href={receita.fonteUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-bold underline"
+                          >
+                            Ver receita original
+                          </a>
+                        )}
+                    </div>
                   )}
 
                   <div className="mt-6 flex flex-wrap gap-3">

@@ -101,7 +101,7 @@ export function RegisterForm({
           label="Criar senha"
           isPassword
           autoComplete="new-password"
-          placeholder="Mínimo de 6 caracteres"
+          placeholder="Mínimo de 8 caracteres"
           error={errors.password?.message}
           {...register('password')}
         />
