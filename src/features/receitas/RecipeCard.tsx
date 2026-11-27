@@ -67,6 +67,11 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
       </div>
 
       <div className="flex min-h-48 flex-col p-5">
+        {recipe.externa && (
+          <p className="mb-2 text-xs font-bold text-brand">
+            Encontrada em fonte externa · {recipe.fonte}
+          </p>
+        )}
         <Link
           to={`/receitas/${encodeURIComponent(recipe.id)}`}
           className="rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"

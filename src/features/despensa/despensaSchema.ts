@@ -5,12 +5,13 @@ export const despensaSchema = z.object({
   nome: z
     .string()
     .trim()
-    .min(2, 'Informe um nome com pelo menos 2 caracteres.')
-    .max(100, 'O nome deve ter no máximo 100 caracteres.'),
+    .min(1, 'Informe o nome do ingrediente.')
+    .max(150, 'O nome deve ter no máximo 150 caracteres.'),
 
   quantidade: z
     .number({ error: 'Informe uma quantidade válida.' })
-    .positive('A quantidade deve ser maior que zero.')
+    .min(0.01, 'A quantidade deve ser de pelo menos 0,01.')
+    .max(99999999.99, 'A quantidade deve ser de no máximo 99999999,99.')
     .finite('Informe uma quantidade válida.'),
 
   unidade: z.enum(['un', 'g', 'kg', 'ml', 'l'], {
